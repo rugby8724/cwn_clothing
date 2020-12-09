@@ -7,30 +7,30 @@ import HomePage from './pages/homepage/homepage.jsx';
 import ShopPage from './pages/shop/shop.jsx';
 import SignInAndSignUpPage from './pages/sign-in-and-sign-up/sign-in-and-sign-up.jsx';
 import Header from './components/header/header.jsx';
-import { auth } from './firebase/firebase/utils.js';
+import { auth } from './firebase/firebase.utils.js';
 
 
 
 
-class App extends React.Component() {
+class App extends React.Component {
   constructor() {
     super();
 
     this.state = {
       currentUser: null
-    }
+    };
   }
 
-  unsubscribeFromAuth = null
+  unsubscribeFromAuth = null;
 
   componentDidMount() {
     this.unsubscribeFromAuth = auth.onAuthStateChanged(user => {
-      this.setState({ currentUser: user})
+      this.setState({ currentUser: user });
 
       console.log(user);
     });
   }
-  // closes the subscrition
+
   componentWillUnmount() {
     this.unsubscribeFromAuth();
   }
@@ -38,7 +38,7 @@ class App extends React.Component() {
   render (){
     return (
       <div>
-        <Header />
+        <Header currentUser={this.state.currentUser} />
         <Switch>
           <Route exact path='/' component={HomePage} />
           <Route path='/shop' component={ShopPage} />
