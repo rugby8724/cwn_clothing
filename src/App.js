@@ -7,7 +7,7 @@ import HomePage from './pages/homepage/homepage.jsx';
 import ShopPage from './pages/shop/shop.jsx';
 import SignInAndSignUpPage from './pages/sign-in-and-sign-up/sign-in-and-sign-up.jsx';
 import Header from './components/header/header.jsx';
-import { auth } from './firebase/firebase.utils.js';
+import { auth, createUserProfileDocument } from './firebase/firebase.utils.js';
 
 
 
@@ -24,10 +24,27 @@ class App extends React.Component {
   unsubscribeFromAuth = null;
 
   componentDidMount() {
-    this.unsubscribeFromAuth = auth.onAuthStateChanged(user => {
-      this.setState({ currentUser: user });
+    this.unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
+      if (userAuth) {
+        // check if our database has updated at userRef with new data
+        const userRef = await createUserProfileDocument(userAuth);
 
-      console.log(user);
+        // onSnapshot will send us the current info for user in database
+        // we do not get any data until we use the data method
+        userRef.onSnapshot(snapShot => {
+          this.setState({
+            currentUser: {
+              id: snapShot.id,
+              ...snapShot.data()
+            }
+          }, () => {
+            console.log(this.state);
+          });
+        });
+      }
+      else {
+        this.setState({currentUser: userAuth});
+      }
     });
   }
 
