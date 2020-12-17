@@ -28,6 +28,7 @@ const Header = ({ currentUser }) => (
             SIGN IN
           </Link>
         )}
+
     </div>
 
   </div>
